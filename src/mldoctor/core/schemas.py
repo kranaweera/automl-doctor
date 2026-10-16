@@ -221,3 +221,39 @@ def build_summary(results: list[DiagnosticResult]) -> Summary:
         findings_by_severity=by_severity,
         **counts,
     )
+
+
+def finite_or_none(value: Any) -> float | None:
+    """Return ``float(value)`` if finite, else ``None`` (caller must record why)."""
+    if value is None:
+        return None
+    number = float(value)
+    return number if math.isfinite(number) else None
+
+
+def jsonable(value: Any) -> Any:
+    """Convert numpy/pandas scalars and containers to plain JSON types.
+
+    Non-finite floats raise ``ValueError``: undefined quantities must be converted to
+    ``None`` deliberately (see :func:`finite_or_none`) so that a reason can be attached.
+    """
+    import numpy as np  # local import keeps schema import light
+
+    if value is None or isinstance(value, (bool, str)):
+        return value
+    if isinstance(value, np.bool_):
+        return bool(value)
+    if isinstance(value, (int, np.integer)):
+        return int(value)
+    if isinstance(value, (float, np.floating)):
+        number = float(value)
+        if not math.isfinite(number):
+            raise ValueError("non-finite value reached serialization; use finite_or_none()")
+        return number
+    if isinstance(value, dict):
+        return {str(k): jsonable(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [jsonable(v) for v in value]
+    if isinstance(value, np.ndarray):
+        return [jsonable(v) for v in value.tolist()]
+    raise TypeError(f"value of type {type(value).__name__} is not JSON-serializable")
