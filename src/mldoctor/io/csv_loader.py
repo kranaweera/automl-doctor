@@ -81,7 +81,9 @@ def load_csv(path: str | Path, role: str, string_columns: list[str] | None = Non
     return LoadedTable(role=role, frame=frame, path=resolved, sha256=file_sha256(resolved))
 
 
-def from_frame(frame: pd.DataFrame, role: str, string_columns: list[str] | None = None) -> LoadedTable:
+def from_frame(
+    frame: pd.DataFrame, role: str, string_columns: list[str] | None = None
+) -> LoadedTable:
     """Wrap an in-memory DataFrame (Python API). The caller's frame is copied, never mutated."""
     if not isinstance(frame, pd.DataFrame):
         raise InputValidationError(f"{role}: expected a pandas DataFrame, got {type(frame)!r}")

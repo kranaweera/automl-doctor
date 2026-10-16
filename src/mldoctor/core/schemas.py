@@ -178,10 +178,10 @@ class Report(_Strict):
 
     @model_validator(mode="after")
     def _summary_matches(self) -> Report:
-        counts = dict.fromkeys(STATUS_VALUES, 0)
+        counts: dict[str, int] = dict.fromkeys(STATUS_VALUES, 0)
         for result in self.diagnostics:
             counts[result.status] += 1
-        expected = {"checks_total": len(self.diagnostics), **counts}
+        expected: dict[str, int] = {"checks_total": len(self.diagnostics), **counts}
         actual = {
             "checks_total": self.summary.checks_total,
             "passed": self.summary.passed,
@@ -192,8 +192,7 @@ class Report(_Strict):
         }
         if expected != actual:
             raise ValueError(f"summary counts {actual} do not match diagnostics {expected}")
-        severities = [f.severity for r in self.diagnostics for f in r.findings]
-        highest = max(severities, key=SEVERITY_ORDER.__getitem__) if severities else None
+        highest = highest_severity([f.severity for r in self.diagnostics for f in r.findings])
         if highest != self.summary.highest_severity:
             raise ValueError(
                 f"summary.highest_severity={self.summary.highest_severity} but findings imply "
@@ -205,6 +204,12 @@ class Report(_Strict):
         return self
 
 
+def highest_severity(severities: list[Severity]) -> Severity | None:
+    if not severities:
+        return None
+    return max(severities, key=lambda s: SEVERITY_ORDER[s])
+
+
 def build_summary(results: list[DiagnosticResult]) -> Summary:
     """Derive the summary block from diagnostic results."""
     counts = dict.fromkeys(STATUS_VALUES, 0)
@@ -213,8 +218,7 @@ def build_summary(results: list[DiagnosticResult]) -> Summary:
         counts[result.status] += 1
         for finding in result.findings:
             by_severity[finding.severity] += 1
-    severities = [f.severity for r in results for f in r.findings]
-    highest = max(severities, key=SEVERITY_ORDER.__getitem__) if severities else None
+    highest = highest_severity([f.severity for r in results for f in r.findings])
     return Summary(
         checks_total=len(results),
         highest_severity=highest,

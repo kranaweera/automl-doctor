@@ -31,7 +31,7 @@ def canonical_labels(series: pd.Series) -> pd.Series:
     other numeric values use ``repr(float)``. Missing values stay missing (``None``).
     """
     if pd.api.types.is_bool_dtype(series.dtype):
-        return series.map(lambda v: None if pd.isna(v) else str(bool(v))).astype(object)
+        return _object_series([None if pd.isna(v) else str(bool(v)) for v in series], series)
     if pd.api.types.is_numeric_dtype(series.dtype):
         values = series.astype(float)
         finite = values[np.isfinite(values)]
@@ -44,7 +44,7 @@ def canonical_labels(series: pd.Series) -> pd.Series:
                 return str(int(v))
             return repr(float(v))
 
-        return values.map(render).astype(object)
+        return _object_series([render(v) for v in values], series)
 
     def render_obj(v: object) -> str | None:
         if v is None or (isinstance(v, float) and np.isnan(v)) or v is pd.NA:
@@ -59,7 +59,12 @@ def canonical_labels(series: pd.Series) -> pd.Series:
             return str(int(number))
         return text
 
-    return series.map(render_obj).astype(object)
+    return _object_series([render_obj(v) for v in series], series)
+
+
+def _object_series(values: list[str | None], like: pd.Series) -> pd.Series:
+    # Built explicitly so that missing labels stay ``None`` rather than becoming NaN.
+    return pd.Series(values, index=like.index, dtype=object, name=like.name)
 
 
 def require_columns(frame: pd.DataFrame, columns: Iterable[str | None], role: str) -> None:
