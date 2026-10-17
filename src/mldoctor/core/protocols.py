@@ -23,12 +23,23 @@ REQUIREMENT_REASONS: dict[str, str] = {
 class Diagnostic(Protocol):
     """Contract every diagnostic (built-in or plugin) must satisfy."""
 
-    id: str
-    version: str
-    title: str
-    description: str
-    supported_tasks: frozenset[Task]
-    requires: frozenset[Requirement]
+    @property
+    def id(self) -> str: ...
+
+    @property
+    def version(self) -> str: ...
+
+    @property
+    def title(self) -> str: ...
+
+    @property
+    def description(self) -> str: ...
+
+    @property
+    def supported_tasks(self) -> frozenset[Task]: ...
+
+    @property
+    def requires(self) -> frozenset[Requirement]: ...
 
     def default_config(self) -> dict[str, Any]: ...
 
