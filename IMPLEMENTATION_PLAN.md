@@ -7,7 +7,7 @@ Where the spec is silent, decisions are recorded in [Decisions](#decisions-and-d
 
 | Milestone | Scope | Status |
 |-----------|-------|--------|
-| 1 — Foundation | packaging, schemas, config, context, protocols, registry, engine, CSV/prediction loaders, validation, CLI skeleton, JSON export | in progress |
+| 1 — Foundation | packaging, schemas, config, context, protocols, registry, engine, CSV/prediction loaders, validation, CLI skeleton, JSON export | complete (2026-10-17) |
 | 2 — Data checks | data integrity, class imbalance, feature correlation, outliers, pure statistics | not started |
 | 3 — ML checks | leakage indicators, prediction errors, generalization gap | not started |
 | 4 — Uncertainty | row/group bootstrap, severity rules, recommendation catalog | not started |
@@ -45,14 +45,16 @@ severities using configured thresholds.
 ## Milestone plan and acceptance gates
 
 ### Milestone 1 — Foundation
-- [ ] `pyproject.toml`, src layout, `mldoctor` console script, `py.typed`
-- [ ] Pydantic schemas with strict JSON validation (no NaN/Inf, counts consistent, enums, ISO timestamps)
-- [ ] Config model with per-diagnostic thresholds, config file (JSON/TOML) loading, fingerprint
-- [ ] DiagnosticContext with seeded per-diagnostic RNG streams
-- [ ] Diagnostic protocol, registry, engine (exceptions -> `error` results)
-- [ ] CSV loader, prediction loader (join by row ID), validation errors
-- [ ] CLI skeleton with exit codes 0/1/2/3, JSON export
+- [x] `pyproject.toml`, src layout, `mldoctor` console script, `py.typed`
+- [x] Pydantic schemas with strict JSON validation (no NaN/Inf, counts consistent, enums, ISO timestamps)
+- [x] Config model with per-diagnostic thresholds, config file (JSON/TOML) loading, fingerprint
+- [x] DiagnosticContext with seeded per-diagnostic RNG streams
+- [x] Diagnostic protocol, registry, engine (exceptions -> `error` results)
+- [x] CSV loader, prediction loader (join by row ID), validation errors
+- [x] CLI skeleton with exit codes 0/1/2/3, JSON export
 - Gate: install, validate, produce a correct empty/skip JSON report.
+- Result: `pip install -e .[dev]` OK; `mldoctor diagnose` on a 4-row CSV writes a schema-valid report
+  with 0 checks; invalid target -> exit 2. pytest 46 passed; ruff clean; mypy --strict clean.
 
 ### Milestone 2 — Dataset diagnostics
 - [ ] statistics/robust.py, statistics/correlations.py
