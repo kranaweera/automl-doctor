@@ -8,7 +8,7 @@ Where the spec is silent, decisions are recorded in [Decisions](#decisions-and-d
 | Milestone | Scope | Status |
 |-----------|-------|--------|
 | 1 — Foundation | packaging, schemas, config, context, protocols, registry, engine, CSV/prediction loaders, validation, CLI skeleton, JSON export | complete (2026-10-17) |
-| 2 — Data checks | data integrity, class imbalance, feature correlation, outliers, pure statistics | not started |
+| 2 — Data checks | data integrity, class imbalance, feature correlation, outliers, pure statistics | complete (2026-10-18) |
 | 3 — ML checks | leakage indicators, prediction errors, generalization gap | not started |
 | 4 — Uncertainty | row/group bootstrap, severity rules, recommendation catalog | not started |
 | 5 — Release | Rich terminal report, docs, examples, integration tests, CI, contributor docs, changelog | not started |
@@ -57,9 +57,12 @@ severities using configured thresholds.
   with 0 checks; invalid target -> exit 2. pytest 46 passed; ruff clean; mypy --strict clean.
 
 ### Milestone 2 — Dataset diagnostics
-- [ ] statistics/robust.py, statistics/correlations.py
-- [ ] data_integrity, imbalance, correlation, outliers
+- [x] statistics/robust.py, statistics/correlations.py
+- [x] data_integrity, imbalance, correlation, outliers
 - Gate: synthetic datasets produce expected values/warnings.
+- Result: 40% missing -> HIGH_MISSINGNESS(high) on the right split; 990:10 -> CLASS_IMBALANCE(high)
+  with exact entropy; B=2A -> r=1 flagged; MAD=0 -> IQR fallback / degenerate without division;
+  correlations match scipy with missing data. pytest 84 passed; ruff + mypy clean.
 
 ### Milestone 3 — Model diagnostics
 - [ ] statistics/metrics.py
