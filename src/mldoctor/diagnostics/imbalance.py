@@ -21,7 +21,7 @@ from mldoctor.core.context import DiagnosticContext
 from mldoctor.core.protocols import BaseDiagnostic
 from mldoctor.core.schemas import DiagnosticResult, Finding, Severity, Task
 from mldoctor.recommendations.rules import make_finding
-from mldoctor.statistics.metrics import class_distribution
+from mldoctor.statistics.metrics import class_distribution, sig
 
 
 class ClassImbalanceDiagnostic(BaseDiagnostic):
@@ -55,18 +55,18 @@ class ClassImbalanceDiagnostic(BaseDiagnostic):
                 "n_labelled": dist.n,
                 "counts": dict(zip(dist.labels, dist.counts, strict=True)),
                 "proportions": {
-                    k: round(v, 6) for k, v in zip(dist.labels, dist.proportions, strict=True)
+                    k: sig(v) for k, v in zip(dist.labels, dist.proportions, strict=True)
                 },
                 "observed_classes": dist.observed_classes,
                 "normalized_entropy": (
-                    None if dist.entropy_normalized is None else round(dist.entropy_normalized, 6)
+                    None if dist.entropy_normalized is None else sig(dist.entropy_normalized)
                 ),
                 "normalized_entropy_undefined_reason": dist.entropy_undefined_reason,
                 "majority_count": dist.majority_count,
                 "minority_count": dist.minority_count,
-                "minority_proportion": None if minority_prop is None else round(minority_prop, 6),
+                "minority_proportion": None if minority_prop is None else sig(minority_prop),
                 "imbalance_ratio": (
-                    None if dist.imbalance_ratio is None else round(dist.imbalance_ratio, 6)
+                    None if dist.imbalance_ratio is None else sig(dist.imbalance_ratio)
                 ),
                 "imbalance_ratio_undefined_reason": dist.imbalance_ratio_undefined_reason,
             }
@@ -126,9 +126,9 @@ class ClassImbalanceDiagnostic(BaseDiagnostic):
                         "split": split,
                         "minority_class": minority_label,
                         "minority_count": minority,
-                        "minority_proportion": round(proportion, 6),
+                        "minority_proportion": sig(proportion),
                         "majority_count": max(present_counts),
-                        "imbalance_ratio_present_classes": round(max(present_counts) / minority, 6),
+                        "imbalance_ratio_present_classes": sig(max(present_counts) / minority),
                         "normalized_entropy": metrics["splits"][split]["normalized_entropy"],
                         "thresholds": {
                             "min_minority_count": cfg.min_minority_count,

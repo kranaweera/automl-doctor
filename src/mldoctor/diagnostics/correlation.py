@@ -23,6 +23,7 @@ from mldoctor.core.protocols import BaseDiagnostic
 from mldoctor.core.schemas import DiagnosticResult, Finding
 from mldoctor.recommendations.rules import make_finding
 from mldoctor.statistics.correlations import PairCorrelation, pairwise_correlations
+from mldoctor.statistics.metrics import sig
 
 
 def _pair_evidence(pair: PairCorrelation) -> dict[str, Any]:
@@ -30,8 +31,8 @@ def _pair_evidence(pair: PairCorrelation) -> dict[str, Any]:
         "feature_a": pair.a,
         "feature_b": pair.b,
         "n": pair.n,
-        "pearson": None if pair.pearson is None else round(pair.pearson, 6),
-        "spearman": None if pair.spearman is None else round(pair.spearman, 6),
+        "pearson": None if pair.pearson is None else sig(pair.pearson),
+        "spearman": None if pair.spearman is None else sig(pair.spearman),
         "spearman_exact": pair.spearman_exact,
     }
 

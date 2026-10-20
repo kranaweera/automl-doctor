@@ -28,6 +28,7 @@ from mldoctor.core.protocols import BaseDiagnostic
 from mldoctor.core.schemas import DiagnosticResult, Finding, Severity
 from mldoctor.io.validation import is_numeric_feature
 from mldoctor.recommendations.rules import make_finding
+from mldoctor.statistics.metrics import sig
 
 _TOP_N = 50
 
@@ -121,7 +122,7 @@ class DataIntegrityDiagnostic(BaseDiagnostic):
                 float(fraction), cfg.missing_warning_fraction, cfg.missing_high_fraction
             )
             if sev is not None:
-                by_severity[sev][str(column)] = round(float(fraction), 6)
+                by_severity[sev][str(column)] = sig(float(fraction))
         level: Severity
         for level in ("high", "medium"):
             flagged = by_severity[level]
@@ -182,7 +183,7 @@ class DataIntegrityDiagnostic(BaseDiagnostic):
             else:
                 top_share = float(counts.iloc[0] / len(present))
                 if top_share >= cfg.near_constant_fraction:
-                    near_constant[column] = round(top_share, 6)
+                    near_constant[column] = sig(top_share)
         if constant:
             findings.append(
                 make_finding(
@@ -238,7 +239,7 @@ class DataIntegrityDiagnostic(BaseDiagnostic):
                         "split": split,
                         "duplicate_feature_rows": dup_feature_rows,
                         "duplicate_full_rows": dup_full_rows,
-                        "fraction": round(dup_feature_rows / n, 6),
+                        "fraction": sig(dup_feature_rows / n),
                     },
                 )
             )
@@ -275,7 +276,7 @@ class DataIntegrityDiagnostic(BaseDiagnostic):
             if share < cfg.mixed_type_min_fraction:
                 continue
             mixed[column] = {
-                "numeric_share": round(share, 6),
+                "numeric_share": sig(share),
                 "non_numeric_count": n_present - numeric_count,
             }
             if share >= 0.5:
@@ -302,7 +303,7 @@ class DataIntegrityDiagnostic(BaseDiagnostic):
                     {
                         "split": split,
                         "missing_count": target_missing,
-                        "fraction": round(target_missing / n, 6),
+                        "fraction": sig(target_missing / n),
                     },
                 )
             )
@@ -312,7 +313,7 @@ class DataIntegrityDiagnostic(BaseDiagnostic):
             "n_rows": n,
             "n_features": len(features),
             "missing_cell_fraction": (
-                round(float(missing_counts.sum()) / total_cells, 6) if total_cells else None
+                sig(float(missing_counts.sum()) / total_cells) if total_cells else None
             ),
             "features_with_missing": int((missing_counts > 0).sum()),
             "all_missing_features": all_missing[:_TOP_N],

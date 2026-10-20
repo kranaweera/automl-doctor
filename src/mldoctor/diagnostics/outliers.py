@@ -22,6 +22,7 @@ from mldoctor.core.context import DiagnosticContext
 from mldoctor.core.protocols import BaseDiagnostic
 from mldoctor.core.schemas import DiagnosticResult, Finding, Severity
 from mldoctor.recommendations.rules import make_finding
+from mldoctor.statistics.metrics import sig
 from mldoctor.statistics.robust import OutlierScreen, SplitScreen, screen_outliers
 
 EXTREME_Z = 10.0
@@ -87,9 +88,9 @@ class OutlierDiagnostic(BaseDiagnostic):
                         "method": screen.method,
                         "n": part.n,
                         "candidates": part.candidates,
-                        "fraction": round(part.candidates / part.n, 6),
+                        "fraction": sig(part.candidates / part.n),
                         "extreme": part.extreme,
-                        "max_score": None if part.max_score is None else round(part.max_score, 4),
+                        "max_score": None if part.max_score is None else sig(part.max_score),
                     }
                 )
             per_feature.sort(key=lambda d: (-d["fraction"], d["feature"]))

@@ -9,7 +9,7 @@ Where the spec is silent, decisions are recorded in [Decisions](#decisions-and-d
 |-----------|-------|--------|
 | 1 — Foundation | packaging, schemas, config, context, protocols, registry, engine, CSV/prediction loaders, validation, CLI skeleton, JSON export | complete (2026-10-17) |
 | 2 — Data checks | data integrity, class imbalance, feature correlation, outliers, pure statistics | complete (2026-10-18) |
-| 3 — ML checks | leakage indicators, prediction errors, generalization gap | not started |
+| 3 — ML checks | leakage indicators, prediction errors, generalization gap | complete (2026-10-20) |
 | 4 — Uncertainty | row/group bootstrap, severity rules, recommendation catalog | not started |
 | 5 — Release | Rich terminal report, docs, examples, integration tests, CI, contributor docs, changelog | not started |
 
@@ -65,9 +65,12 @@ severities using configured thresholds.
   correlations match scipy with missing data. pytest 84 passed; ruff + mypy clean.
 
 ### Milestone 3 — Model diagnostics
-- [ ] statistics/metrics.py
-- [ ] leakage, prediction_errors, overfitting
+- [x] statistics/metrics.py
+- [x] leakage, prediction_errors, overfitting
 - Gate: known group overlap and model failure fixtures detected.
+- Result: group overlap critical/medium/info by declared goal; R² .95→.20 flagged high with
+  gap .75; shuffled prediction CSV gives identical metrics; metrics match scikit-learn
+  (property test); one-class test set handled. pytest 114 passed; ruff + mypy clean.
 
 ### Milestone 4 — Statistical reliability
 - [ ] statistics/bootstrap.py (row + group), uncertainty diagnostic
