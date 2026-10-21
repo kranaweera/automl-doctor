@@ -1,0 +1,146 @@
+{
+  "classification": {
+    "class_imbalance": {
+      "findings": [
+        "CLASS_IMBALANCE:medium"
+      ],
+      "status": "warning"
+    },
+    "data_integrity": {
+      "findings": [
+        "HIGH_MISSINGNESS:medium",
+        "HIGH_MISSINGNESS:medium",
+        "CONSTANT_FEATURE:low",
+        "CONSTANT_FEATURE:low"
+      ],
+      "status": "warning"
+    },
+    "feature_correlation": {
+      "findings": [],
+      "status": "passed"
+    },
+    "leakage": {
+      "findings": [
+        "POSSIBLE_TARGET_COPY:high"
+      ],
+      "status": "failed"
+    },
+    "outliers": {
+      "findings": [
+        "OUTLIER_CANDIDATES:medium",
+        "OUTLIER_CANDIDATES:low"
+      ],
+      "status": "warning"
+    },
+    "overfitting": {
+      "findings": [
+        "GENERALIZATION_GAP:high"
+      ],
+      "status": "failed"
+    },
+    "prediction_errors": {
+      "findings": [
+        "UNEVEN_CLASS_PERFORMANCE:low"
+      ],
+      "status": "warning"
+    },
+    "uncertainty": {
+      "findings": [
+        "WIDE_METRIC_INTERVAL:low"
+      ],
+      "status": "warning"
+    }
+  },
+  "grouped_data": {
+    "class_imbalance": {
+      "findings": [],
+      "status": "skipped"
+    },
+    "data_integrity": {
+      "findings": [],
+      "status": "passed"
+    },
+    "feature_correlation": {
+      "findings": [],
+      "status": "passed"
+    },
+    "leakage": {
+      "findings": [
+        "GROUP_OVERLAP:critical",
+        "CROSS_SPLIT_DUPLICATE:high"
+      ],
+      "status": "failed"
+    },
+    "outliers": {
+      "findings": [
+        "OUTLIER_CANDIDATES:info",
+        "OUTLIER_CANDIDATES:info"
+      ],
+      "status": "passed"
+    },
+    "overfitting": {
+      "findings": [
+        "GENERALIZATION_GAP:high"
+      ],
+      "status": "failed"
+    },
+    "prediction_errors": {
+      "findings": [],
+      "status": "passed"
+    },
+    "uncertainty": {
+      "findings": [
+        "WIDE_METRIC_INTERVAL:medium",
+        "SMALL_EVALUATION_SET:low"
+      ],
+      "status": "warning"
+    }
+  },
+  "regression": {
+    "class_imbalance": {
+      "findings": [],
+      "status": "skipped"
+    },
+    "data_integrity": {
+      "findings": [
+        "HIGH_MISSINGNESS:high"
+      ],
+      "status": "failed"
+    },
+    "feature_correlation": {
+      "findings": [
+        "HIGH_FEATURE_CORRELATION:medium"
+      ],
+      "status": "warning"
+    },
+    "leakage": {
+      "findings": [
+        "CROSS_SPLIT_DUPLICATE:medium"
+      ],
+      "status": "warning"
+    },
+    "outliers": {
+      "findings": [
+        "OUTLIER_CANDIDATES:medium",
+        "OUTLIER_CANDIDATES:low"
+      ],
+      "status": "warning"
+    },
+    "overfitting": {
+      "findings": [
+        "GENERALIZATION_GAP:high"
+      ],
+      "status": "failed"
+    },
+    "prediction_errors": {
+      "findings": [
+        "SYSTEMATIC_BIAS:medium"
+      ],
+      "status": "warning"
+    },
+    "uncertainty": {
+      "findings": [],
+      "status": "passed"
+    }
+  }
+}
