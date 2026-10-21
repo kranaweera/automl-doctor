@@ -1,0 +1,745 @@
+{
+  "schema_version": "0.1.0",
+  "tool": {
+    "name": "automl-doctor",
+    "version": "0.1.0"
+  },
+  "run": {
+    "id": "5a1c4037-8d3a-4c6f-b9e0-4fa4a247a0fa",
+    "task": "regression",
+    "seed": 42,
+    "started_at": "2026-10-21T21:59:16.422402Z",
+    "completed_at": "2026-10-21T21:59:16.766106Z",
+    "command": "diagnose",
+    "config_fingerprint": "f0f7e92c1329c3cb1d8ac266a7221a433842be1994a447f6eb53bafc8cc3a449",
+    "evaluation_target": "unspecified"
+  },
+  "dataset": {
+    "train_rows": 800,
+    "test_rows": 200,
+    "feature_count": 6,
+    "numeric_feature_count": 6,
+    "target": "price",
+    "row_id_column": "row_id",
+    "group_column": null,
+    "has_test_predictions": true,
+    "has_train_predictions": true,
+    "class_labels": null,
+    "inputs": [
+      {
+        "role": "train",
+        "sha256": "6ab8e7d71b90cfd263f128e731001194c3fc0b68400ad3a642c947a9e350db3a",
+        "rows": 800,
+        "columns": 8
+      },
+      {
+        "role": "test",
+        "sha256": "1d7e79dbb26a93873d4b76426709f9fb762e530356d86614531a7e6daefd3b27",
+        "rows": 200,
+        "columns": 8
+      },
+      {
+        "role": "predictions",
+        "sha256": "7e04146d85bd522bd89e8e06339b33b291d340e9630b6a9eb1585f072481fe66",
+        "rows": 200,
+        "columns": 2
+      },
+      {
+        "role": "train_predictions",
+        "sha256": "aa3f121ef813a865720edbbb6440cd0a4b90ac599955ad738bbb6b6bf1776ca1",
+        "rows": 800,
+        "columns": 2
+      }
+    ]
+  },
+  "summary": {
+    "checks_total": 8,
+    "passed": 1,
+    "warning": 4,
+    "failed": 2,
+    "skipped": 1,
+    "error": 0,
+    "highest_severity": "high",
+    "findings_by_severity": {
+      "info": 0,
+      "low": 1,
+      "medium": 4,
+      "high": 2,
+      "critical": 0
+    }
+  },
+  "diagnostics": [
+    {
+      "id": "data_integrity",
+      "status": "failed",
+      "findings": [
+        {
+          "code": "HIGH_MISSINGNESS",
+          "severity": "high",
+          "title": "High missingness",
+          "message": "test: 1 feature(s) have missing fraction ≥ 0.3: 'garage_area' (35%)",
+          "evidence": {
+            "split": "test",
+            "threshold": 0.3,
+            "feature_count": 1,
+            "missing_fraction": {
+              "garage_area": 0.35
+            },
+            "n_rows": 200
+          },
+          "recommendation": "Investigate why values are missing (collection process, joins, sensor failures). Missingness may be informative and is not assumed to be completely at random; choose imputation or modelling strategies deliberately and fit them on training data only.",
+          "limitations": [
+            "Heuristic threshold; missingness is not assumed to be random."
+          ]
+        }
+      ],
+      "metrics": {
+        "splits": {
+          "train": {
+            "n_rows": 800,
+            "n_features": 6,
+            "missing_cell_fraction": 0.0,
+            "features_with_missing": 0,
+            "all_missing_features": [],
+            "constant_features": 0,
+            "near_constant_features": 0,
+            "features_with_infinity": 0,
+            "duplicate_feature_rows": 0,
+            "duplicate_full_rows": 0,
+            "discordant_duplicate_groups": 0,
+            "mixed_type_features": 0,
+            "target_missing": 0
+          },
+          "test": {
+            "n_rows": 200,
+            "n_features": 6,
+            "missing_cell_fraction": 0.05833333333,
+            "features_with_missing": 1,
+            "all_missing_features": [],
+            "constant_features": 0,
+            "near_constant_features": 0,
+            "features_with_infinity": 0,
+            "duplicate_feature_rows": 0,
+            "duplicate_full_rows": 0,
+            "discordant_duplicate_groups": 0,
+            "mixed_type_features": 0,
+            "target_missing": 0
+          }
+        },
+        "dtype_mismatches": 0
+      },
+      "skip_reason": null,
+      "title": "Missingness and data integrity",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Descriptive only: the missingness mechanism (MCAR/MAR/MNAR) is not tested or assumed.",
+        "Duplicate detection uses exact equality after parsing; near-duplicates are not found."
+      ],
+      "error_message": null,
+      "duration_ms": 3.209
+    },
+    {
+      "id": "class_imbalance",
+      "status": "skipped",
+      "findings": [],
+      "metrics": {},
+      "skip_reason": "not applicable to regression tasks (supports: classification)",
+      "title": "Class imbalance",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [],
+      "error_message": null,
+      "duration_ms": 0.004
+    },
+    {
+      "id": "feature_correlation",
+      "status": "warning",
+      "findings": [
+        {
+          "code": "HIGH_FEATURE_CORRELATION",
+          "severity": "medium",
+          "title": "Highly correlated features",
+          "message": "1 feature pair(s) with near-perfect correlation (max(|r|, |rho|) ≥ 0.99): 'sqft'~'sqft_m2'",
+          "evidence": {
+            "threshold": 0.99,
+            "pair_count": 1,
+            "pairs": [
+              {
+                "feature_a": "sqft",
+                "feature_b": "sqft_m2",
+                "n": 800,
+                "pearson": 1.0,
+                "spearman": 1.0,
+                "spearman_exact": true
+              }
+            ]
+          },
+          "recommendation": "These pairs are redundancy candidates. Check whether one is derived from the other. Correlation is neither proof of leakage nor, by itself, grounds for removal.",
+          "limitations": [
+            "Correlation is not evidence of leakage."
+          ]
+        }
+      ],
+      "metrics": {
+        "features_analyzed": 6,
+        "pairs_total": 15,
+        "pairs_defined": 15,
+        "pairs_undefined": {},
+        "pairs_flagged": 1,
+        "constant_features": [],
+        "min_pair_n": 10,
+        "top_pairs": [
+          {
+            "feature_a": "sqft",
+            "feature_b": "sqft_m2",
+            "n": 800,
+            "pearson": 1.0,
+            "spearman": 1.0,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "age_years",
+            "feature_b": "lot_size",
+            "n": 800,
+            "pearson": -0.0005568921728,
+            "spearman": 0.08835712857,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "bedrooms",
+            "feature_b": "garage_area",
+            "n": 800,
+            "pearson": -0.08162932327,
+            "spearman": -0.07990204352,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "sqft",
+            "feature_b": "bedrooms",
+            "n": 800,
+            "pearson": 0.04916583225,
+            "spearman": 0.03784942641,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "sqft_m2",
+            "feature_b": "bedrooms",
+            "n": 800,
+            "pearson": 0.0491656737,
+            "spearman": 0.03784942641,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "age_years",
+            "feature_b": "garage_area",
+            "n": 800,
+            "pearson": 0.03384063141,
+            "spearman": 0.04274446724,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "sqft",
+            "feature_b": "lot_size",
+            "n": 800,
+            "pearson": 0.01688084953,
+            "spearman": -0.03926625652,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "sqft_m2",
+            "feature_b": "lot_size",
+            "n": 800,
+            "pearson": 0.01688063015,
+            "spearman": -0.03926625652,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "bedrooms",
+            "feature_b": "lot_size",
+            "n": 800,
+            "pearson": 0.0005038436051,
+            "spearman": 0.03415268034,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "bedrooms",
+            "feature_b": "age_years",
+            "n": 800,
+            "pearson": -0.02367848148,
+            "spearman": -0.02525100813,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "sqft",
+            "feature_b": "garage_area",
+            "n": 800,
+            "pearson": -0.02243598622,
+            "spearman": -0.01956800893,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "sqft_m2",
+            "feature_b": "garage_area",
+            "n": 800,
+            "pearson": -0.02243572344,
+            "spearman": -0.01956800893,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "lot_size",
+            "feature_b": "garage_area",
+            "n": 800,
+            "pearson": -0.0009322730317,
+            "spearman": 0.01908828861,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "sqft",
+            "feature_b": "age_years",
+            "n": 800,
+            "pearson": -0.004243581417,
+            "spearman": -0.008179920169,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "sqft_m2",
+            "feature_b": "age_years",
+            "n": 800,
+            "pearson": -0.004243494931,
+            "spearman": -0.008179920169,
+            "spearman_exact": true
+          }
+        ]
+      },
+      "skip_reason": null,
+      "title": "Feature correlation",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Only pairwise linear/monotone dependence is screened; multicollinearity involving three or more features (e.g. a = b + c) is not detected.",
+        "Correlation thresholds are heuristics, not significance tests."
+      ],
+      "error_message": null,
+      "duration_ms": 0.846
+    },
+    {
+      "id": "outliers",
+      "status": "warning",
+      "findings": [
+        {
+          "code": "OUTLIER_CANDIDATES",
+          "severity": "medium",
+          "title": "Outlier candidates",
+          "message": "train: 2 feature(s) have outlier candidates: 'lot_size', 'garage_area'; 1 extreme value(s)",
+          "evidence": {
+            "split": "train",
+            "z_threshold": 3.5,
+            "iqr_multiplier": 1.5,
+            "extreme_z": 10.0,
+            "features": [
+              {
+                "feature": "lot_size",
+                "method": "modified_z",
+                "n": 800,
+                "candidates": 11,
+                "fraction": 0.01375,
+                "extreme": 1,
+                "max_score": 1186.79155
+              },
+              {
+                "feature": "garage_area",
+                "method": "modified_z",
+                "n": 800,
+                "candidates": 1,
+                "fraction": 0.00125,
+                "extreme": 0,
+                "max_score": 3.534970803
+              }
+            ],
+            "feature_count": 2
+          },
+          "recommendation": "Review flagged values for entry errors or unit mismatches. Legitimate rare observations can be important; do not delete them automatically.",
+          "limitations": [
+            "max_score is |modified z| for modified_z and distance beyond the quartiles in IQR units for iqr."
+          ]
+        },
+        {
+          "code": "OUTLIER_CANDIDATES",
+          "severity": "low",
+          "title": "Outlier candidates",
+          "message": "test: 1 feature(s) have outlier candidates (scored against training median/MAD): 'lot_size'; 0 extreme value(s)",
+          "evidence": {
+            "split": "test",
+            "z_threshold": 3.5,
+            "iqr_multiplier": 1.5,
+            "extreme_z": 10.0,
+            "features": [
+              {
+                "feature": "lot_size",
+                "method": "modified_z",
+                "n": 200,
+                "candidates": 3,
+                "fraction": 0.015,
+                "extreme": 0,
+                "max_score": 3.952103843
+              }
+            ],
+            "feature_count": 1
+          },
+          "recommendation": "Review flagged values for entry errors or unit mismatches. Legitimate rare observations can be important; do not delete them automatically.",
+          "limitations": [
+            "max_score is |modified z| for modified_z and distance beyond the quartiles in IQR units for iqr."
+          ]
+        }
+      ],
+      "metrics": {
+        "features_screened": 6,
+        "methods": {
+          "modified_z": 6
+        },
+        "splits": {
+          "train": {
+            "features_with_candidates": 2,
+            "total_candidates": 12,
+            "extreme_candidates": 1
+          },
+          "test": {
+            "features_with_candidates": 1,
+            "total_candidates": 3,
+            "extreme_candidates": 0
+          }
+        },
+        "reference_split": "train"
+      },
+      "skip_reason": null,
+      "title": "Outlier screening",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Univariate screening only; multivariate or contextual anomalies are not detected.",
+        "Heavy-tailed or multimodal features naturally produce candidates; they are not errors by default."
+      ],
+      "error_message": null,
+      "duration_ms": 0.683
+    },
+    {
+      "id": "leakage",
+      "status": "warning",
+      "findings": [
+        {
+          "code": "CROSS_SPLIT_DUPLICATE",
+          "severity": "medium",
+          "title": "Feature rows shared across splits",
+          "message": "9 of 200 test rows (4.5%) have a feature row identical to a training row; 9 training rows appear in test",
+          "evidence": {
+            "test_rows_in_train": 9,
+            "test_fraction": 0.045,
+            "train_rows_in_test": 9,
+            "train_fraction": 0.01125,
+            "overlapping_distinct_rows": 9,
+            "test_rows_with_same_target": 9,
+            "distinct_train_feature_rows": 800,
+            "low_cardinality_feature_space": false
+          },
+          "recommendation": "Identical feature rows in train and test can inflate held-out performance. Decide whether repeated measurements are expected for your evaluation goal; deduplicate or split by entity if the test set should contain unseen records.",
+          "limitations": [
+            "Exact matching only; near-duplicates (rounding, reordered text) are not detected."
+          ]
+        }
+      ],
+      "metrics": {
+        "cross_split_overlap": {
+          "test_rows_in_train": 9,
+          "test_fraction": 0.045,
+          "train_rows_in_test": 9,
+          "train_fraction": 0.01125,
+          "overlapping_distinct_rows": 9,
+          "test_rows_with_same_target": 9,
+          "distinct_train_feature_rows": 800,
+          "low_cardinality_feature_space": false
+        },
+        "target_copy_features": [],
+        "suspicious_associations": 0,
+        "suspicious_names": 0,
+        "evaluation_target": "unspecified"
+      },
+      "skip_reason": null,
+      "title": "Data leakage indicators",
+      "version": "0.1.0",
+      "skipped_subchecks": {
+        "group_overlap": "no group column declared (--group)"
+      },
+      "limitations": [
+        "Pipeline/preprocessing leakage (e.g. scaling, imputation or feature selection fit on all data, temporal look-ahead) cannot be detected from CSV files; passing these checks does not rule out leakage."
+      ],
+      "error_message": null,
+      "duration_ms": 4.266
+    },
+    {
+      "id": "overfitting",
+      "status": "failed",
+      "findings": [
+        {
+          "code": "GENERALIZATION_GAP",
+          "severity": "high",
+          "title": "Generalization gap",
+          "message": "held-out performance is worse than training on mae (train 3,351 → test 18,338), rmse (train 4,171 → test 22,930), r2 (train 0.9959 → test 0.8869)",
+          "evidence": {
+            "metrics": {
+              "mae": {
+                "train": 3351.0075,
+                "test": 18337.965,
+                "direction": "lower_is_better",
+                "gap": 14986.9575,
+                "relative_gap": 4.472373607,
+                "thresholds": {
+                  "medium": 0.25,
+                  "high": 0.5,
+                  "applied_to": "relative_gap"
+                },
+                "severity": "high"
+              },
+              "rmse": {
+                "train": 4170.764461,
+                "test": 22930.11022,
+                "direction": "lower_is_better",
+                "gap": 18759.34576,
+                "relative_gap": 4.497819509,
+                "thresholds": {
+                  "medium": 0.25,
+                  "high": 0.5,
+                  "applied_to": "relative_gap"
+                },
+                "severity": "high"
+              },
+              "r2": {
+                "train": 0.9958772357,
+                "test": 0.8869137071,
+                "direction": "higher_is_better",
+                "gap": 0.1089635287,
+                "relative_gap": null,
+                "thresholds": {
+                  "medium": 0.1,
+                  "high": 0.25,
+                  "applied_to": "gap"
+                },
+                "severity": "medium"
+              }
+            }
+          },
+          "recommendation": "Training performance exceeds held-out performance. Possible causes include overfitting, distribution shift between splits, split errors or leakage into training. Compare against cross-validated estimates and regularized baselines.",
+          "limitations": [
+            "Possible causes include overfitting, distribution shift between splits, split errors and leakage into training data."
+          ]
+        }
+      ],
+      "metrics": {
+        "n_train": 800,
+        "n_test": 200,
+        "gaps": {
+          "mae": {
+            "train": 3351.0075,
+            "test": 18337.965,
+            "direction": "lower_is_better",
+            "gap": 14986.9575,
+            "relative_gap": 4.472373607,
+            "thresholds": {
+              "medium": 0.25,
+              "high": 0.5,
+              "applied_to": "relative_gap"
+            },
+            "severity": "high"
+          },
+          "rmse": {
+            "train": 4170.764461,
+            "test": 22930.11022,
+            "direction": "lower_is_better",
+            "gap": 18759.34576,
+            "relative_gap": 4.497819509,
+            "thresholds": {
+              "medium": 0.25,
+              "high": 0.5,
+              "applied_to": "relative_gap"
+            },
+            "severity": "high"
+          },
+          "r2": {
+            "train": 0.9958772357,
+            "test": 0.8869137071,
+            "direction": "higher_is_better",
+            "gap": 0.1089635287,
+            "relative_gap": null,
+            "thresholds": {
+              "medium": 0.1,
+              "high": 0.25,
+              "applied_to": "gap"
+            },
+            "severity": "medium"
+          }
+        },
+        "gap_definition": "positive = worse on held-out; higher-is-better: train − test; lower-is-better: test − train"
+      },
+      "skip_reason": null,
+      "title": "Generalization gap",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Gaps are point estimates; held-out metric uncertainty is reported by the uncertainty diagnostic.",
+        "A gap does not identify its cause (overfitting, shift, split error or leakage)."
+      ],
+      "error_message": null,
+      "duration_ms": 0.171
+    },
+    {
+      "id": "uncertainty",
+      "status": "passed",
+      "findings": [],
+      "metrics": {
+        "estimand": "performance of the fixed trained model on the population represented by the evaluation set",
+        "method": "percentile bootstrap",
+        "resampling_unit": "row",
+        "n_units": 200,
+        "n_rows": 200,
+        "group_sizes": null,
+        "n_bootstrap": 1000,
+        "confidence_level": 0.95,
+        "seed": 42,
+        "random_stream": "uncertainty",
+        "intervals": {
+          "mae": {
+            "estimate": 18337.965,
+            "ci_low": 16469.49162,
+            "ci_high": 20391.4335,
+            "width": 3921.941875,
+            "replicate_sd": 1000.237978,
+            "n_valid_replicates": 1000,
+            "valid_fraction": 1.0,
+            "undefined_reason": null
+          },
+          "rmse": {
+            "estimate": 22930.11022,
+            "ci_low": 20832.9439,
+            "ci_high": 24943.32285,
+            "width": 4110.378948,
+            "replicate_sd": 1056.7213,
+            "n_valid_replicates": 1000,
+            "valid_fraction": 1.0,
+            "undefined_reason": null
+          },
+          "r2": {
+            "estimate": 0.8869137071,
+            "ci_low": 0.8559515066,
+            "ci_high": 0.9117218187,
+            "width": 0.05577031202,
+            "replicate_sd": 0.01467921204,
+            "n_valid_replicates": 1000,
+            "valid_fraction": 1.0,
+            "undefined_reason": null
+          }
+        }
+      },
+      "skip_reason": null,
+      "title": "Performance uncertainty",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Conditional on this evaluation set and trained model: does not reflect re-training variability, alternative splits or future temporal drift.",
+        "Percentile intervals can under-cover for small or imbalanced evaluation sets.",
+        "Replicates with undefined metrics are dropped; the interval is conditional on the valid replicates."
+      ],
+      "error_message": null,
+      "duration_ms": 9.199
+    },
+    {
+      "id": "prediction_errors",
+      "status": "warning",
+      "findings": [
+        {
+          "code": "SYSTEMATIC_BIAS",
+          "severity": "medium",
+          "title": "Systematic prediction bias",
+          "message": "model over-predicts on average: mean signed error 12,187 accounts for 28% of the MSE",
+          "evidence": {
+            "mean_signed_error": 12186.735,
+            "bias_fraction": 0.2824635743,
+            "threshold": 0.25,
+            "n": 200
+          },
+          "recommendation": "Predictions are shifted in a consistent direction. Check for target drift, mis-specified link/scale, or calibration issues; inspect errors by subgroup.",
+          "limitations": [
+            "Constant offset only; error patterns that cancel on average (e.g. by target range) are shown in error_by_target_quintile."
+          ]
+        }
+      ],
+      "metrics": {
+        "n": 200,
+        "error_definition": "ŷ − y",
+        "mae": 18337.965,
+        "mse": 525789954.9,
+        "rmse": 22930.11022,
+        "median_absolute_error": 15636.5,
+        "mean_signed_error": 12186.735,
+        "r2": 0.8869137071,
+        "error_sd": 19472.2698,
+        "bias_fraction": 0.2824635743,
+        "signed_error_quantiles": {
+          "q05": -18832.25,
+          "q25": -2840.0,
+          "q50": 12698.0,
+          "q75": 27063.5,
+          "q95": 41354.6
+        },
+        "slope_y_on_prediction": 0.9239439687,
+        "slope_undefined_reason": null,
+        "error_by_target_quintile": [
+          {
+            "quintile": 1,
+            "n": 40,
+            "mean_signed_error": 13076.85,
+            "mae": 18162.65
+          },
+          {
+            "quintile": 2,
+            "n": 40,
+            "mean_signed_error": 9313.225,
+            "mae": 15904.825
+          },
+          {
+            "quintile": 3,
+            "n": 40,
+            "mean_signed_error": 15194.75,
+            "mae": 19639.2
+          },
+          {
+            "quintile": 4,
+            "n": 40,
+            "mean_signed_error": 12311.85,
+            "mae": 20849.45
+          },
+          {
+            "quintile": 5,
+            "n": 40,
+            "mean_signed_error": 11037.0,
+            "mae": 17133.7
+          }
+        ],
+        "undefined": {}
+      },
+      "skip_reason": null,
+      "title": "Prediction error analysis",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Point estimates on one evaluation set; see the uncertainty diagnostic for intervals.",
+        "Error patterns are descriptive and do not identify causes."
+      ],
+      "error_message": null,
+      "duration_ms": 0.332
+    }
+  ],
+  "execution": {
+    "duration_ms": 343.575,
+    "warnings": []
+  }
+}

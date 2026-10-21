@@ -1,0 +1,831 @@
+{
+  "schema_version": "0.1.0",
+  "tool": {
+    "name": "automl-doctor",
+    "version": "0.1.0"
+  },
+  "run": {
+    "id": "b0cd7d6d-25f0-4f71-9d7d-32c5a6642641",
+    "task": "classification",
+    "seed": 42,
+    "started_at": "2026-10-21T21:59:16.987281Z",
+    "completed_at": "2026-10-21T21:59:17.341131Z",
+    "command": "diagnose",
+    "config_fingerprint": "f0f7e92c1329c3cb1d8ac266a7221a433842be1994a447f6eb53bafc8cc3a449",
+    "evaluation_target": "unspecified"
+  },
+  "dataset": {
+    "train_rows": 1500,
+    "test_rows": 400,
+    "feature_count": 6,
+    "numeric_feature_count": 4,
+    "target": "churned",
+    "row_id_column": "customer_id",
+    "group_column": null,
+    "has_test_predictions": true,
+    "has_train_predictions": true,
+    "class_labels": [
+      "0",
+      "1"
+    ],
+    "inputs": [
+      {
+        "role": "train",
+        "sha256": "b879060bc943e10d6945fe271b2069070f48570834dac7fc2236f9cb921bde28",
+        "rows": 1500,
+        "columns": 8
+      },
+      {
+        "role": "test",
+        "sha256": "7dc0be5a3f438f1043939056c7432708e68b478d0fefd8bf539f7ac52d4bed38",
+        "rows": 400,
+        "columns": 8
+      },
+      {
+        "role": "predictions",
+        "sha256": "5ad5074197c2a886c3a6146126168447fa3756889176f9188e0590c85b630d6c",
+        "rows": 400,
+        "columns": 2
+      },
+      {
+        "role": "train_predictions",
+        "sha256": "13963532f17b75f3c8097db8448acf17cb5ff2cffc6c6bf762941366e2ce5e6c",
+        "rows": 1500,
+        "columns": 2
+      }
+    ]
+  },
+  "summary": {
+    "checks_total": 8,
+    "passed": 1,
+    "warning": 5,
+    "failed": 2,
+    "skipped": 0,
+    "error": 0,
+    "highest_severity": "high",
+    "findings_by_severity": {
+      "info": 0,
+      "low": 5,
+      "medium": 4,
+      "high": 2,
+      "critical": 0
+    }
+  },
+  "diagnostics": [
+    {
+      "id": "data_integrity",
+      "status": "warning",
+      "findings": [
+        {
+          "code": "HIGH_MISSINGNESS",
+          "severity": "medium",
+          "title": "High missingness",
+          "message": "test: 1 feature(s) have missing fraction ≥ 0.05: 'notes_len' (11%)",
+          "evidence": {
+            "split": "test",
+            "threshold": 0.05,
+            "feature_count": 1,
+            "missing_fraction": {
+              "notes_len": 0.1125
+            },
+            "n_rows": 400
+          },
+          "recommendation": "Investigate why values are missing (collection process, joins, sensor failures). Missingness may be informative and is not assumed to be completely at random; choose imputation or modelling strategies deliberately and fit them on training data only.",
+          "limitations": [
+            "Heuristic threshold; missingness is not assumed to be random."
+          ]
+        },
+        {
+          "code": "HIGH_MISSINGNESS",
+          "severity": "medium",
+          "title": "High missingness",
+          "message": "train: 1 feature(s) have missing fraction ≥ 0.05: 'notes_len' (8%)",
+          "evidence": {
+            "split": "train",
+            "threshold": 0.05,
+            "feature_count": 1,
+            "missing_fraction": {
+              "notes_len": 0.07733333333
+            },
+            "n_rows": 1500
+          },
+          "recommendation": "Investigate why values are missing (collection process, joins, sensor failures). Missingness may be informative and is not assumed to be completely at random; choose imputation or modelling strategies deliberately and fit them on training data only.",
+          "limitations": [
+            "Heuristic threshold; missingness is not assumed to be random."
+          ]
+        },
+        {
+          "code": "CONSTANT_FEATURE",
+          "severity": "low",
+          "title": "Constant feature",
+          "message": "test: 1 feature(s) have a single observed value: 'region_code'",
+          "evidence": {
+            "split": "test",
+            "features": [
+              "region_code"
+            ],
+            "count": 1
+          },
+          "recommendation": "A feature with a single observed value carries no information in this split. Confirm it is expected (e.g. a filter artefact) before deciding whether to keep it.",
+          "limitations": []
+        },
+        {
+          "code": "CONSTANT_FEATURE",
+          "severity": "low",
+          "title": "Constant feature",
+          "message": "train: 1 feature(s) have a single observed value: 'region_code'",
+          "evidence": {
+            "split": "train",
+            "features": [
+              "region_code"
+            ],
+            "count": 1
+          },
+          "recommendation": "A feature with a single observed value carries no information in this split. Confirm it is expected (e.g. a filter artefact) before deciding whether to keep it.",
+          "limitations": []
+        }
+      ],
+      "metrics": {
+        "splits": {
+          "train": {
+            "n_rows": 1500,
+            "n_features": 6,
+            "missing_cell_fraction": 0.01288888889,
+            "features_with_missing": 1,
+            "all_missing_features": [],
+            "constant_features": 1,
+            "near_constant_features": 0,
+            "features_with_infinity": 0,
+            "duplicate_feature_rows": 0,
+            "duplicate_full_rows": 0,
+            "discordant_duplicate_groups": 0,
+            "mixed_type_features": 0,
+            "target_missing": 0
+          },
+          "test": {
+            "n_rows": 400,
+            "n_features": 6,
+            "missing_cell_fraction": 0.01875,
+            "features_with_missing": 1,
+            "all_missing_features": [],
+            "constant_features": 1,
+            "near_constant_features": 0,
+            "features_with_infinity": 0,
+            "duplicate_feature_rows": 0,
+            "duplicate_full_rows": 0,
+            "discordant_duplicate_groups": 0,
+            "mixed_type_features": 0,
+            "target_missing": 0
+          }
+        },
+        "dtype_mismatches": 0
+      },
+      "skip_reason": null,
+      "title": "Missingness and data integrity",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Descriptive only: the missingness mechanism (MCAR/MAR/MNAR) is not tested or assumed.",
+        "Duplicate detection uses exact equality after parsing; near-duplicates are not found."
+      ],
+      "error_message": null,
+      "duration_ms": 5.371
+    },
+    {
+      "id": "class_imbalance",
+      "status": "warning",
+      "findings": [
+        {
+          "code": "CLASS_IMBALANCE",
+          "severity": "medium",
+          "title": "Class imbalance",
+          "message": "test: smallest class '1' has 18 of 400 rows (4.50%); minority count 18 < 20; minority proportion 0.0450 < 0.05",
+          "evidence": {
+            "split": "test",
+            "minority_class": "1",
+            "minority_count": 18,
+            "minority_proportion": 0.045,
+            "majority_count": 382,
+            "imbalance_ratio_present_classes": 21.22222222,
+            "normalized_entropy": 0.2647650339,
+            "thresholds": {
+              "min_minority_count": 20,
+              "min_minority_proportion": 0.05,
+              "severe_minority_count": 10,
+              "severe_minority_proportion": 0.02
+            }
+          },
+          "recommendation": "Prefer metrics that remain informative under imbalance (balanced accuracy, per-class recall/precision, macro-F1) and stratified splitting. Resampling or re-weighting are modelling choices to evaluate, not automatic fixes.",
+          "limitations": [
+            "Accuracy can look high by predicting the majority class; per-class metrics for the minority class have high variance."
+          ]
+        }
+      ],
+      "metrics": {
+        "declared_classes": [
+          "0",
+          "1"
+        ],
+        "splits": {
+          "train": {
+            "n_labelled": 1500,
+            "counts": {
+              "0": 1425,
+              "1": 75
+            },
+            "proportions": {
+              "0": 0.95,
+              "1": 0.05
+            },
+            "observed_classes": 2,
+            "normalized_entropy": 0.2863969571,
+            "normalized_entropy_undefined_reason": null,
+            "majority_count": 1425,
+            "minority_count": 75,
+            "minority_proportion": 0.05,
+            "imbalance_ratio": 19.0,
+            "imbalance_ratio_undefined_reason": null
+          },
+          "test": {
+            "n_labelled": 400,
+            "counts": {
+              "0": 382,
+              "1": 18
+            },
+            "proportions": {
+              "0": 0.955,
+              "1": 0.045
+            },
+            "observed_classes": 2,
+            "normalized_entropy": 0.2647650339,
+            "normalized_entropy_undefined_reason": null,
+            "majority_count": 382,
+            "minority_count": 18,
+            "minority_proportion": 0.045,
+            "imbalance_ratio": 21.22222222,
+            "imbalance_ratio_undefined_reason": null
+          }
+        }
+      },
+      "skip_reason": null,
+      "title": "Class imbalance",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Thresholds are contextual heuristics; acceptable imbalance depends on the application and the metric used."
+      ],
+      "error_message": null,
+      "duration_ms": 0.153
+    },
+    {
+      "id": "feature_correlation",
+      "status": "passed",
+      "findings": [],
+      "metrics": {
+        "features_analyzed": 4,
+        "pairs_total": 6,
+        "pairs_defined": 6,
+        "pairs_undefined": {},
+        "pairs_flagged": 0,
+        "constant_features": [],
+        "min_pair_n": 10,
+        "top_pairs": [
+          {
+            "feature_a": "monthly_spend",
+            "feature_b": "notes_len",
+            "n": 1384,
+            "pearson": -0.07020468624,
+            "spearman": -0.0680520903,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "tenure_months",
+            "feature_b": "monthly_spend",
+            "n": 1500,
+            "pearson": 0.01362881021,
+            "spearman": 0.03708674565,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "tenure_months",
+            "feature_b": "notes_len",
+            "n": 1384,
+            "pearson": -0.02761134157,
+            "spearman": -0.0258866917,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "monthly_spend",
+            "feature_b": "support_tickets",
+            "n": 1500,
+            "pearson": 0.02033959789,
+            "spearman": 0.01348335803,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "tenure_months",
+            "feature_b": "support_tickets",
+            "n": 1500,
+            "pearson": -0.01488946223,
+            "spearman": -0.005235424818,
+            "spearman_exact": true
+          },
+          {
+            "feature_a": "support_tickets",
+            "feature_b": "notes_len",
+            "n": 1384,
+            "pearson": -0.01247774674,
+            "spearman": -0.005410375087,
+            "spearman_exact": true
+          }
+        ]
+      },
+      "skip_reason": null,
+      "title": "Feature correlation",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Only pairwise linear/monotone dependence is screened; multicollinearity involving three or more features (e.g. a = b + c) is not detected.",
+        "Correlation thresholds are heuristics, not significance tests."
+      ],
+      "error_message": null,
+      "duration_ms": 1.342
+    },
+    {
+      "id": "outliers",
+      "status": "warning",
+      "findings": [
+        {
+          "code": "OUTLIER_CANDIDATES",
+          "severity": "medium",
+          "title": "Outlier candidates",
+          "message": "train: 2 feature(s) have outlier candidates: 'tenure_months', 'monthly_spend'; 1 extreme value(s)",
+          "evidence": {
+            "split": "train",
+            "z_threshold": 3.5,
+            "iqr_multiplier": 1.5,
+            "extreme_z": 10.0,
+            "features": [
+              {
+                "feature": "tenure_months",
+                "method": "modified_z",
+                "n": 1500,
+                "candidates": 50,
+                "fraction": 0.03333333333,
+                "extreme": 1,
+                "max_score": 10.18788261
+              },
+              {
+                "feature": "monthly_spend",
+                "method": "modified_z",
+                "n": 1500,
+                "candidates": 19,
+                "fraction": 0.01266666667,
+                "extreme": 0,
+                "max_score": 6.027849366
+              }
+            ],
+            "feature_count": 2
+          },
+          "recommendation": "Review flagged values for entry errors or unit mismatches. Legitimate rare observations can be important; do not delete them automatically.",
+          "limitations": [
+            "max_score is |modified z| for modified_z and distance beyond the quartiles in IQR units for iqr."
+          ]
+        },
+        {
+          "code": "OUTLIER_CANDIDATES",
+          "severity": "low",
+          "title": "Outlier candidates",
+          "message": "test: 2 feature(s) have outlier candidates (scored against training median/MAD): 'tenure_months', 'monthly_spend'; 0 extreme value(s)",
+          "evidence": {
+            "split": "test",
+            "z_threshold": 3.5,
+            "iqr_multiplier": 1.5,
+            "extreme_z": 10.0,
+            "features": [
+              {
+                "feature": "tenure_months",
+                "method": "modified_z",
+                "n": 400,
+                "candidates": 19,
+                "fraction": 0.0475,
+                "extreme": 0,
+                "max_score": 7.560265217
+              },
+              {
+                "feature": "monthly_spend",
+                "method": "modified_z",
+                "n": 400,
+                "candidates": 6,
+                "fraction": 0.015,
+                "extreme": 0,
+                "max_score": 5.998774247
+              }
+            ],
+            "feature_count": 2
+          },
+          "recommendation": "Review flagged values for entry errors or unit mismatches. Legitimate rare observations can be important; do not delete them automatically.",
+          "limitations": [
+            "max_score is |modified z| for modified_z and distance beyond the quartiles in IQR units for iqr."
+          ]
+        }
+      ],
+      "metrics": {
+        "features_screened": 4,
+        "methods": {
+          "modified_z": 4
+        },
+        "splits": {
+          "train": {
+            "features_with_candidates": 2,
+            "total_candidates": 69,
+            "extreme_candidates": 1
+          },
+          "test": {
+            "features_with_candidates": 2,
+            "total_candidates": 25,
+            "extreme_candidates": 0
+          }
+        },
+        "reference_split": "train"
+      },
+      "skip_reason": null,
+      "title": "Outlier screening",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Univariate screening only; multivariate or contextual anomalies are not detected.",
+        "Heavy-tailed or multimodal features naturally produce candidates; they are not errors by default."
+      ],
+      "error_message": null,
+      "duration_ms": 0.586
+    },
+    {
+      "id": "leakage",
+      "status": "failed",
+      "findings": [
+        {
+          "code": "POSSIBLE_TARGET_COPY",
+          "severity": "high",
+          "title": "Possible target copy",
+          "message": "1 feature(s) reproduce or deterministically encode the target in training data: 'refund_issued'",
+          "evidence": {
+            "features": [
+              {
+                "feature": "refund_issued",
+                "kind": "one_to_one_recoding",
+                "n": 1500
+              }
+            ]
+          },
+          "recommendation": "A feature reproduces or deterministically encodes the target. Confirm that it would be available at prediction time; if not, remove it and re-evaluate.",
+          "limitations": []
+        }
+      ],
+      "metrics": {
+        "cross_split_overlap": {
+          "test_rows_in_train": 0,
+          "test_fraction": 0.0,
+          "train_rows_in_test": 0,
+          "train_fraction": 0.0,
+          "overlapping_distinct_rows": 0,
+          "test_rows_with_same_target": null,
+          "distinct_train_feature_rows": 1500,
+          "low_cardinality_feature_space": false
+        },
+        "target_copy_features": [
+          "refund_issued"
+        ],
+        "suspicious_associations": 0,
+        "suspicious_names": 0,
+        "evaluation_target": "unspecified"
+      },
+      "skip_reason": null,
+      "title": "Data leakage indicators",
+      "version": "0.1.0",
+      "skipped_subchecks": {
+        "group_overlap": "no group column declared (--group)"
+      },
+      "limitations": [
+        "Pipeline/preprocessing leakage (e.g. scaling, imputation or feature selection fit on all data, temporal look-ahead) cannot be detected from CSV files; passing these checks does not rule out leakage."
+      ],
+      "error_message": null,
+      "duration_ms": 10.667
+    },
+    {
+      "id": "overfitting",
+      "status": "failed",
+      "findings": [
+        {
+          "code": "GENERALIZATION_GAP",
+          "severity": "high",
+          "title": "Generalization gap",
+          "message": "held-out performance is worse than training on balanced_accuracy (train 0.9744 → test 0.5438), macro_f1 (train 0.8232 → test 0.5528)",
+          "evidence": {
+            "metrics": {
+              "balanced_accuracy": {
+                "train": 0.9743859649,
+                "test": 0.5437754508,
+                "direction": "higher_is_better",
+                "gap": 0.4306105141,
+                "relative_gap": null,
+                "thresholds": {
+                  "medium": 0.05,
+                  "high": 0.15,
+                  "applied_to": "gap"
+                },
+                "severity": "high"
+              },
+              "macro_f1": {
+                "train": 0.8231791897,
+                "test": 0.5527528065,
+                "direction": "higher_is_better",
+                "gap": 0.2704263832,
+                "relative_gap": null,
+                "thresholds": {
+                  "medium": 0.05,
+                  "high": 0.15,
+                  "applied_to": "gap"
+                },
+                "severity": "high"
+              }
+            }
+          },
+          "recommendation": "Training performance exceeds held-out performance. Possible causes include overfitting, distribution shift between splits, split errors or leakage into training. Compare against cross-validated estimates and regularized baselines.",
+          "limitations": [
+            "Possible causes include overfitting, distribution shift between splits, split errors and leakage into training data."
+          ]
+        }
+      ],
+      "metrics": {
+        "n_train": 1500,
+        "n_test": 400,
+        "gaps": {
+          "accuracy": {
+            "train": 0.9513333333,
+            "test": 0.9375,
+            "direction": "higher_is_better",
+            "gap": 0.01383333333,
+            "relative_gap": null,
+            "thresholds": {
+              "medium": 0.05,
+              "high": 0.15,
+              "applied_to": "gap"
+            }
+          },
+          "balanced_accuracy": {
+            "train": 0.9743859649,
+            "test": 0.5437754508,
+            "direction": "higher_is_better",
+            "gap": 0.4306105141,
+            "relative_gap": null,
+            "thresholds": {
+              "medium": 0.05,
+              "high": 0.15,
+              "applied_to": "gap"
+            },
+            "severity": "high"
+          },
+          "macro_f1": {
+            "train": 0.8231791897,
+            "test": 0.5527528065,
+            "direction": "higher_is_better",
+            "gap": 0.2704263832,
+            "relative_gap": null,
+            "thresholds": {
+              "medium": 0.05,
+              "high": 0.15,
+              "applied_to": "gap"
+            },
+            "severity": "high"
+          }
+        },
+        "gap_definition": "positive = worse on held-out; higher-is-better: train − test; lower-is-better: test − train",
+        "per_class_recall": {
+          "0": {
+            "train": 0.9487719298,
+            "test": 0.9764397906,
+            "gap": -0.02766786075
+          },
+          "1": {
+            "train": 1.0,
+            "test": 0.1111111111,
+            "gap": 0.8888888889
+          }
+        }
+      },
+      "skip_reason": null,
+      "title": "Generalization gap",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Gaps are point estimates; held-out metric uncertainty is reported by the uncertainty diagnostic.",
+        "A gap does not identify its cause (overfitting, shift, split error or leakage)."
+      ],
+      "error_message": null,
+      "duration_ms": 0.458
+    },
+    {
+      "id": "uncertainty",
+      "status": "warning",
+      "findings": [
+        {
+          "code": "WIDE_METRIC_INTERVAL",
+          "severity": "low",
+          "title": "Wide metric confidence interval",
+          "message": "2 metric(s) have wide 95% intervals (resampling 400 rows): balanced_accuracy 0.5438 [0.4854, 0.6274], macro_f1 0.5528 [0.4812, 0.6408]",
+          "evidence": {
+            "metrics": [
+              {
+                "metric": "balanced_accuracy",
+                "estimate": 0.5437754508,
+                "ci_low": 0.4854478006,
+                "ci_high": 0.6273662071,
+                "width": 0.1419184065,
+                "measure": "absolute_width",
+                "value": 0.1419184065,
+                "threshold": 0.1
+              },
+              {
+                "metric": "macro_f1",
+                "estimate": 0.5527528065,
+                "ci_low": 0.4811932555,
+                "ci_high": 0.6408391512,
+                "width": 0.1596458957,
+                "measure": "absolute_width",
+                "value": 0.1596458957,
+                "threshold": 0.1
+              }
+            ],
+            "resampling_unit": "row",
+            "n_units": 400
+          },
+          "recommendation": "The held-out estimate is imprecise. Use a larger evaluation set, repeated or cross-validated evaluation, and report intervals alongside point estimates.",
+          "limitations": []
+        }
+      ],
+      "metrics": {
+        "estimand": "performance of the fixed trained model on the population represented by the evaluation set",
+        "method": "percentile bootstrap",
+        "resampling_unit": "row",
+        "n_units": 400,
+        "n_rows": 400,
+        "group_sizes": null,
+        "n_bootstrap": 1000,
+        "confidence_level": 0.95,
+        "seed": 42,
+        "random_stream": "uncertainty",
+        "intervals": {
+          "accuracy": {
+            "estimate": 0.9375,
+            "ci_low": 0.9125,
+            "ci_high": 0.96,
+            "width": 0.0475,
+            "replicate_sd": 0.01230513755,
+            "n_valid_replicates": 1000,
+            "valid_fraction": 1.0,
+            "undefined_reason": null
+          },
+          "balanced_accuracy": {
+            "estimate": 0.5437754508,
+            "ci_low": 0.4854478006,
+            "ci_high": 0.6273662071,
+            "width": 0.1419184065,
+            "replicate_sd": 0.03810052771,
+            "n_valid_replicates": 1000,
+            "valid_fraction": 1.0,
+            "undefined_reason": null
+          },
+          "macro_f1": {
+            "estimate": 0.5527528065,
+            "ci_low": 0.4811932555,
+            "ci_high": 0.6408391512,
+            "width": 0.1596458957,
+            "replicate_sd": 0.04437704895,
+            "n_valid_replicates": 1000,
+            "valid_fraction": 1.0,
+            "undefined_reason": null
+          }
+        }
+      },
+      "skip_reason": null,
+      "title": "Performance uncertainty",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Conditional on this evaluation set and trained model: does not reflect re-training variability, alternative splits or future temporal drift.",
+        "Percentile intervals can under-cover for small or imbalanced evaluation sets.",
+        "Replicates with undefined metrics are dropped; the interval is conditional on the valid replicates."
+      ],
+      "error_message": null,
+      "duration_ms": 20.069
+    },
+    {
+      "id": "prediction_errors",
+      "status": "warning",
+      "findings": [
+        {
+          "code": "UNEVEN_CLASS_PERFORMANCE",
+          "severity": "low",
+          "title": "Uneven per-class performance",
+          "message": "1 class(es) have recall ≤ 50% of the best class recall (0.9764): '1' 0.1111",
+          "evidence": {
+            "classes": [
+              {
+                "class": "1",
+                "recall": 0.1111111111,
+                "support": 18
+              }
+            ],
+            "best_recall": 0.9764397906,
+            "ratio_threshold": 0.5,
+            "min_class_support": 10
+          },
+          "recommendation": "Some classes are recognised far less reliably than others. Report per-class metrics, check class coverage in training data and consider class-aware evaluation or decision thresholds.",
+          "limitations": [
+            "Per-class recall on small classes has high variance."
+          ]
+        }
+      ],
+      "metrics": {
+        "n": 400,
+        "labels": [
+          "0",
+          "1"
+        ],
+        "confusion_matrix": {
+          "rows": "true",
+          "columns": "predicted",
+          "matrix": [
+            [
+              373,
+              9
+            ],
+            [
+              16,
+              2
+            ]
+          ]
+        },
+        "accuracy": 0.9375,
+        "balanced_accuracy": 0.5437754508,
+        "macro_f1": 0.5527528065,
+        "per_class": {
+          "0": {
+            "support": 382,
+            "predicted": 389,
+            "precision": 0.9588688946,
+            "recall": 0.9764397906,
+            "f1": 0.9675745785,
+            "undefined": {}
+          },
+          "1": {
+            "support": 18,
+            "predicted": 11,
+            "precision": 0.1818181818,
+            "recall": 0.1111111111,
+            "f1": 0.1379310345,
+            "undefined": {}
+          }
+        },
+        "undefined": {},
+        "top_confusions": [
+          {
+            "true": "1",
+            "predicted": "0",
+            "count": 16
+          },
+          {
+            "true": "0",
+            "predicted": "1",
+            "count": 9
+          }
+        ],
+        "prevalence": {
+          "0": {
+            "true": 0.955,
+            "predicted": 0.9725
+          },
+          "1": {
+            "true": 0.045,
+            "predicted": 0.0275
+          }
+        }
+      },
+      "skip_reason": null,
+      "title": "Prediction error analysis",
+      "version": "0.1.0",
+      "skipped_subchecks": {},
+      "limitations": [
+        "Point estimates on one evaluation set; see the uncertainty diagnostic for intervals.",
+        "Error patterns are descriptive and do not identify causes."
+      ],
+      "error_message": null,
+      "duration_ms": 0.26
+    }
+  ],
+  "execution": {
+    "duration_ms": 353.693,
+    "warnings": []
+  }
+}
