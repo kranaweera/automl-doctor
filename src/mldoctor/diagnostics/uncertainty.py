@@ -36,7 +36,7 @@ from mldoctor.statistics.bootstrap import (
     regression_statistics,
     row_resampler,
 )
-from mldoctor.statistics.metrics import sig
+from mldoctor.statistics.metrics import fmt_number, sig
 
 BOUNDED = {"accuracy", "balanced_accuracy", "macro_f1", "r2"}
 
@@ -131,7 +131,12 @@ class UncertaintyDiagnostic(BaseDiagnostic):
                     "WIDE_METRIC_INTERVAL",
                     wide_severity,
                     f"{len(wide)} metric(s) have wide {cfg.confidence_level:.0%} intervals "
-                    f"(resampling {unit_desc})",
+                    f"(resampling {unit_desc}): "
+                    + ", ".join(
+                        f"{w['metric']} {fmt_number(w['estimate'])} "
+                        f"[{fmt_number(w['ci_low'])}, {fmt_number(w['ci_high'])}]"
+                        for w in wide
+                    ),
                     {"metrics": wide, "resampling_unit": resampler.unit,
                      "n_units": resampler.n_units},
                 )

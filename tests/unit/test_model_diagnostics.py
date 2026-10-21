@@ -311,3 +311,15 @@ def test_gap_not_computed_when_metric_undefined() -> None:
     assert "balanced_accuracy" in _codes(result)["UNDEFINED_METRIC"].evidence["metrics"]
     acc = result.metrics["gaps"]["accuracy"]
     assert acc["gap"] == pytest.approx(1.0 - 50 / 60)
+
+
+def test_uneven_class_recall_flagged() -> None:
+    test = pd.DataFrame({"row_id": [f"t{i}" for i in range(120)], "x": np.arange(120.0),
+                         "y": [0] * 100 + [1] * 20})
+    preds = _preds(test, [0] * 100 + [1] * 2 + [0] * 18)
+    train = test.assign(row_id=lambda d: d["row_id"] + "_tr")
+    ctx, _ = build_context(train=train, test=test, predictions=preds,
+                           target="y", task="classification", row_id="row_id")
+    finding = _codes(run_one(PredictionErrorDiagnostic(), ctx))["UNEVEN_CLASS_PERFORMANCE"]
+    assert finding.evidence["classes"] == [{"class": "1", "recall": 0.1, "support": 20}]
+    assert finding.evidence["best_recall"] == 1.0

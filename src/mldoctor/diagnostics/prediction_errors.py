@@ -30,6 +30,7 @@ from mldoctor.statistics.metrics import (
     ClassificationMetrics,
     MetricValue,
     classification_metrics,
+    fmt_number,
     regression_metrics,
     sig,
 )
@@ -155,7 +156,7 @@ class PredictionErrorDiagnostic(BaseDiagnostic):
                 make_finding(
                     "SYSTEMATIC_BIAS",
                     "medium",
-                    f"model {direction} on average: mean signed error {mean_error:.4g} "
+                    f"model {direction} on average: mean signed error {fmt_number(mean_error)} "
                     f"accounts for {bias_fraction:.0%} of the MSE",
                     {"mean_signed_error": sig(mean_error),
                      "bias_fraction": sig(bias_fraction),
@@ -241,6 +242,32 @@ class PredictionErrorDiagnostic(BaseDiagnostic):
                      "threshold": cfg.prevalence_shift_threshold},
                 )
             )
+        recalls = [
+            (c.label, c.recall.value, c.support) for c in present
+            if c.recall.value is not None and c.support >= cfg.min_class_support
+        ]
+        if len(recalls) >= 2 and len(predicted_classes) > 1:
+            best = max(r for _, r, _ in recalls)
+            weak: list[dict[str, Any]] = [
+                {"class": label, "recall": sig(r), "support": n}
+                for label, r, n in recalls
+                if r <= cfg.recall_ratio_threshold * best and label not in never
+            ]
+            if weak and best > 0:
+                findings.append(
+                    make_finding(
+                        "UNEVEN_CLASS_PERFORMANCE",
+                        "low",
+                        f"{len(weak)} class(es) have recall ≤ {cfg.recall_ratio_threshold:.0%} "
+                        f"of the best class recall ({fmt_number(best)}): "
+                        + ", ".join(f"'{w['class']}' {fmt_number(float(w['recall']))}"
+                                    for w in weak),
+                        {"classes": weak, "best_recall": sig(best),
+                         "ratio_threshold": cfg.recall_ratio_threshold,
+                         "min_class_support": cfg.min_class_support},
+                        limitations=["Per-class recall on small classes has high variance."],
+                    )
+                )
         undefined = metrics["undefined"]
         if undefined:
             findings.append(

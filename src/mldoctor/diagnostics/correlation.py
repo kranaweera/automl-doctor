@@ -92,7 +92,9 @@ class FeatureCorrelationDiagnostic(BaseDiagnostic):
                     "HIGH_FEATURE_CORRELATION",
                     severity,  # type: ignore[arg-type]
                     f"{len(group)} feature pair(s) with {label} correlation "
-                    f"(max(|r|, |rho|) ≥ {threshold:g})",
+                    f"(max(|r|, |rho|) ≥ {threshold:g}): "
+                    + ", ".join(f"'{p.a}'~'{p.b}'" for p in group[:3])
+                    + (f" and {len(group) - 3} more" if len(group) > 3 else ""),
                     {
                         "threshold": threshold,
                         "pair_count": len(group),

@@ -28,7 +28,7 @@ from mldoctor.core.protocols import BaseDiagnostic
 from mldoctor.core.schemas import DiagnosticResult, Finding, Severity
 from mldoctor.io.validation import is_numeric_feature
 from mldoctor.recommendations.rules import make_finding
-from mldoctor.statistics.metrics import sig
+from mldoctor.statistics.metrics import name_list, sig
 
 _TOP_N = 50
 
@@ -136,7 +136,9 @@ class DataIntegrityDiagnostic(BaseDiagnostic):
                 make_finding(
                     "HIGH_MISSINGNESS",
                     level,
-                    f"{split}: {len(flagged)} feature(s) have missing fraction ≥ {threshold:g}",
+                    f"{split}: {len(flagged)} feature(s) have missing fraction ≥ {threshold:g}: "
+                    + ", ".join(f"'{k}' ({v:.0%})" for k, v in list(ranked.items())[:3])
+                    + (f" and {len(flagged) - 3} more" if len(flagged) > 3 else ""),
                     {
                         "split": split,
                         "threshold": threshold,
@@ -163,7 +165,8 @@ class DataIntegrityDiagnostic(BaseDiagnostic):
                 make_finding(
                     "INVALID_NUMERIC_VALUES",
                     "medium",
-                    f"{split}: {len(inf_counts)} feature(s) contain ±Infinity values",
+                    f"{split}: {len(inf_counts)} feature(s) contain ±Infinity values: "
+                    f"{name_list(list(inf_counts))}",
                     {"split": split, "features": dict(list(inf_counts.items())[:_TOP_N])},
                 )
             )
@@ -189,7 +192,8 @@ class DataIntegrityDiagnostic(BaseDiagnostic):
                 make_finding(
                     "CONSTANT_FEATURE",
                     "low",
-                    f"{split}: {len(constant)} feature(s) have a single observed value",
+                    f"{split}: {len(constant)} feature(s) have a single observed value: "
+                    f"{name_list(constant)}",
                     {"split": split, "features": constant[:_TOP_N], "count": len(constant)},
                 )
             )
@@ -286,7 +290,8 @@ class DataIntegrityDiagnostic(BaseDiagnostic):
                 make_finding(
                     "MIXED_TYPES",
                     mixed_severity,
-                    f"{split}: {len(mixed)} text column(s) mix numeric and non-numeric values",
+                    f"{split}: {len(mixed)} text column(s) mix numeric and non-numeric values: "
+                    f"{name_list(list(mixed))}",
                     {"split": split, "features": dict(list(mixed.items())[:_TOP_N])},
                     limitations=["Raw values are not reported to preserve row privacy."],
                 )

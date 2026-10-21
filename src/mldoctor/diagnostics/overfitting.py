@@ -28,6 +28,7 @@ from mldoctor.statistics.metrics import (
     HIGHER_IS_BETTER,
     MetricValue,
     classification_metrics,
+    fmt_number,
     metric_gap,
     regression_metrics,
     sig,
@@ -151,7 +152,8 @@ class OverfittingDiagnostic(BaseDiagnostic):
                     worst,
                     "held-out performance is worse than training on "
                     + ", ".join(
-                        f"{n} (train {rows[n]['train']:.4g} → test {rows[n]['test']:.4g})"
+                        f"{n} (train {fmt_number(rows[n]['train'])} → test "
+                        f"{fmt_number(rows[n]['test'])})"
                         for n in names
                     ),
                     {"metrics": {n: rows[n] for n in names}},

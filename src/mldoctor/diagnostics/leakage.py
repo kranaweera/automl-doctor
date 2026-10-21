@@ -38,7 +38,7 @@ from mldoctor.core.schemas import DiagnosticResult, Finding, Severity
 from mldoctor.io.validation import canonical_labels, is_numeric_feature
 from mldoctor.recommendations.rules import make_finding
 from mldoctor.statistics.correlations import pearson_spearman
-from mldoctor.statistics.metrics import sig
+from mldoctor.statistics.metrics import name_list, sig
 
 NA_TOKEN = "\x00NA"
 _SEP = "\x1f"
@@ -352,7 +352,7 @@ class LeakageDiagnostic(BaseDiagnostic):
                     "POSSIBLE_TARGET_COPY",
                     "high",
                     f"{len(copies)} feature(s) reproduce or deterministically encode the target "
-                    "in training data",
+                    f"in training data: {name_list([c['feature'] for c in copies])}",
                     {"features": copies},
                 )
             )
@@ -362,7 +362,8 @@ class LeakageDiagnostic(BaseDiagnostic):
                     "SUSPICIOUS_TARGET_ASSOCIATION",
                     "medium",
                     f"{len(associations)} feature(s) have near-perfect association with the "
-                    "target in training data (screen, not proof of leakage)",
+                    f"target in training data: {name_list([a['feature'] for a in associations])} "
+                    "(screen, not proof of leakage)",
                     {
                         "features": associations,
                         "thresholds": {
@@ -401,7 +402,8 @@ class LeakageDiagnostic(BaseDiagnostic):
                 make_finding(
                     "SUSPICIOUS_FEATURE_NAME",
                     "low",
-                    f"{len(matches)} feature name(s) resemble the target or post-outcome fields",
+                    f"{len(matches)} feature name(s) resemble the target or post-outcome fields: "
+                    f"{name_list([m['feature'] for m in matches])}",
                     {"features": matches},
                 )
             )

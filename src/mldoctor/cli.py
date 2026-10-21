@@ -122,6 +122,10 @@ AllowExtraOpt = Annotated[
     ),
 ]
 QuietOpt = Annotated[bool, typer.Option("--quiet", "-q", help="Do not print the terminal report.")]
+ShowOpt = Annotated[
+    SeverityChoice,
+    typer.Option("--show", help="Lowest finding severity shown in the terminal report."),
+]
 
 
 def _run(
@@ -144,6 +148,7 @@ def _run(
     continue_on_error: bool | None = None,
     allow_extra_columns: bool | None = None,
     quiet: bool = False,
+    show: SeverityChoice = SeverityChoice.low,
 ) -> int:
     overrides: dict[str, Any] = {
         "seed": seed,
@@ -183,7 +188,7 @@ def _run(
             if not quiet:
                 err_console.print(f"Report written to [bold]{path}[/]")
         if not quiet and not to_stdout:
-            render_report(report)
+            render_report(report, min_severity=show.value)
     except (OSError, ValueError) as exc:
         err_console.print(f"[bold red]Could not write report:[/] {exc}")
         return ExitCode.INTERNAL_ERROR
@@ -229,6 +234,7 @@ def diagnose_cmd(
     continue_on_error: ContinueOpt = None,
     allow_extra_columns: AllowExtraOpt = None,
     quiet: QuietOpt = False,
+    show: ShowOpt = SeverityChoice.low,
 ) -> None:
     """Run all applicable diagnostics."""
     raise typer.Exit(
@@ -238,7 +244,7 @@ def diagnose_cmd(
             row_id=row_id, group=group, config=config, output=output, seed=seed,
             evaluation_target=evaluation_target, fail_on=fail_on,
             continue_on_error=continue_on_error, allow_extra_columns=allow_extra_columns,
-            quiet=quiet,
+            quiet=quiet, show=show,
         )
     )
 
@@ -255,13 +261,14 @@ def data_cmd(
     fail_on: FailOnOpt = None,
     continue_on_error: ContinueOpt = None,
     quiet: QuietOpt = False,
+    show: ShowOpt = SeverityChoice.low,
 ) -> None:
     """Run dataset checks (integrity, imbalance, correlation, outliers) on training data."""
     raise typer.Exit(
         _run(
             command="data", diagnostics=DATA_ONLY_DIAGNOSTICS, train=train, target=target,
             task=task, group=group, config=config, output=output, seed=seed, fail_on=fail_on,
-            continue_on_error=continue_on_error, quiet=quiet,
+            continue_on_error=continue_on_error, quiet=quiet, show=show,
         )
     )
 
@@ -282,6 +289,7 @@ def leakage_cmd(
     continue_on_error: ContinueOpt = None,
     allow_extra_columns: AllowExtraOpt = None,
     quiet: QuietOpt = False,
+    show: ShowOpt = SeverityChoice.low,
 ) -> None:
     """Run leakage indicators (cross-split overlap, group overlap, target copies)."""
     raise typer.Exit(
@@ -290,7 +298,7 @@ def leakage_cmd(
             task=task, test=test, row_id=row_id, group=group, config=config, output=output,
             seed=seed, evaluation_target=evaluation_target, fail_on=fail_on,
             continue_on_error=continue_on_error, allow_extra_columns=allow_extra_columns,
-            quiet=quiet,
+            quiet=quiet, show=show,
         )
     )
 
@@ -300,7 +308,8 @@ def checks_cmd() -> None:
     """List installed checks, their task support and required inputs."""
     console = Console()
     table = Table(title="Installed diagnostics", show_lines=False)
-    for column in ("id", "title", "tasks", "requires", "version"):
+    table.add_column("id", no_wrap=True)
+    for column in ("title", "tasks", "requires", "version"):
         table.add_column(column)
     for diagnostic in default_registry():
         table.add_row(
@@ -316,6 +325,7 @@ def checks_cmd() -> None:
 @app.command("report")
 def report_cmd(
     path: Annotated[Path, typer.Argument(help="Report JSON produced by mldoctor.")],
+    show: ShowOpt = SeverityChoice.low,
 ) -> None:
     """Validate an existing report JSON and render it in the terminal."""
     try:
@@ -323,7 +333,7 @@ def report_cmd(
     except ReportFormatError as exc:
         err_console.print(f"[bold red]Invalid report:[/] {exc}")
         raise typer.Exit(ExitCode.INVALID_INPUT) from None
-    render_report(report)
+    render_report(report, min_severity=show.value)
 
 
 @app.command("version")

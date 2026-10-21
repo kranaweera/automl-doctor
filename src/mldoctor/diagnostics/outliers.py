@@ -22,7 +22,7 @@ from mldoctor.core.context import DiagnosticContext
 from mldoctor.core.protocols import BaseDiagnostic
 from mldoctor.core.schemas import DiagnosticResult, Finding, Severity
 from mldoctor.recommendations.rules import make_finding
-from mldoctor.statistics.metrics import sig
+from mldoctor.statistics.metrics import name_list, sig
 from mldoctor.statistics.robust import OutlierScreen, SplitScreen, screen_outliers
 
 EXTREME_Z = 10.0
@@ -114,7 +114,8 @@ class OutlierDiagnostic(BaseDiagnostic):
                     "OUTLIER_CANDIDATES",
                     severity,
                     f"{split}: {len(per_feature)} feature(s) have outlier candidates"
-                    f"{reference}; {extreme_total} extreme value(s)",
+                    f"{reference}: {name_list([d['feature'] for d in per_feature])}; "
+                    f"{extreme_total} extreme value(s)",
                     {
                         "split": split,
                         "z_threshold": cfg.modified_z_threshold,

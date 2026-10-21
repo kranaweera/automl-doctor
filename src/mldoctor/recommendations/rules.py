@@ -176,6 +176,12 @@ CATALOG: dict[str, CatalogEntry] = {
         "The model predicts a single class for every row. Check training, class weighting "
         "and whether predictions were exported correctly.",
     ),
+    "UNEVEN_CLASS_PERFORMANCE": CatalogEntry(
+        "Uneven per-class performance",
+        "Some classes are recognised far less reliably than others. Report per-class "
+        "metrics, check class coverage in training data and consider class-aware evaluation "
+        "or decision thresholds.",
+    ),
     "TEST_OUTPERFORMS_TRAIN": CatalogEntry(
         "Held-out performance exceeds training",
         "Better held-out than training performance is unusual. Possible causes include "

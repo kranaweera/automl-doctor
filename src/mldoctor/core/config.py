@@ -109,6 +109,8 @@ class PredictionErrorConfig(_Cfg):
     prevalence_shift_threshold: float = Field(0.15, gt=0, le=1)
     min_n: int = Field(5, ge=1)
     top_confusions: int = Field(10, ge=1)
+    recall_ratio_threshold: float = Field(0.5, gt=0, lt=1)
+    min_class_support: int = Field(10, ge=1)
 
 
 class DoctorConfig(_Cfg):

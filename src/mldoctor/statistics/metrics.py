@@ -274,3 +274,17 @@ def sig(value: float, digits: int = 10) -> float:
     if value == 0 or not math.isfinite(value):
         return float(value)
     return float(f"{value:.{digits}g}")
+
+
+def fmt_number(value: float) -> str:
+    """Human-readable number for messages (evidence keeps full precision)."""
+    if value != 0 and (abs(value) >= 1e5 or abs(value) < 1e-3):
+        return f"{value:.3g}"
+    if abs(value) >= 1000:
+        return f"{value:,.0f}"
+    return f"{value:.4g}"
+
+
+def name_list(names: list[str], limit: int = 3) -> str:
+    shown = ", ".join(f"'{n}'" for n in names[:limit])
+    return shown + (f" and {len(names) - limit} more" if len(names) > limit else "")
