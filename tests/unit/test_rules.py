@@ -26,9 +26,10 @@ def test_catalog_contains_all_spec_codes() -> None:
 
 def test_every_code_used_in_source_is_catalogued() -> None:
     src = Path(__file__).resolve().parents[2] / "src" / "mldoctor" / "diagnostics"
-    used = set()
+    used: set[str] = set()
     for path in src.glob("*.py"):
-        used |= set(re.findall(r'make_finding\(\s*"([A-Z_]+)"', path.read_text()))
+        text = path.read_text(encoding="utf-8")
+        used |= set(re.findall(r'make_finding\(\s*"([A-Z_]+)"', text))
     assert used, "expected to find make_finding calls"
     assert used <= set(CATALOG)
 

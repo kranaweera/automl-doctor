@@ -98,3 +98,26 @@ def test_rng_streams_are_reproducible_and_independent() -> None:
     b = ctx.rng("other").integers(0, 1_000_000, 5)
     assert a1.tolist() == a2.tolist()
     assert a1.tolist() != b.tolist()
+
+
+def test_plugins_load_only_when_enabled(monkeypatch: pytest.MonkeyPatch) -> None:
+    from mldoctor.core import registry as registry_module
+
+    class _EP:
+        name = "flags"
+
+        def load(self) -> type:
+            return Flags
+
+    monkeypatch.setattr(registry_module, "entry_points", lambda group: [_EP()])
+    assert "flags" not in registry_module.default_registry().ids()
+    assert "flags" in registry_module.default_registry(load_plugins=True).ids()
+
+
+def test_builtin_registry_order() -> None:
+    from mldoctor.core.registry import default_registry
+
+    assert default_registry().ids() == [
+        "data_integrity", "class_imbalance", "feature_correlation", "outliers", "leakage",
+        "overfitting", "uncertainty", "prediction_errors",
+    ]
