@@ -10,7 +10,7 @@ Where the spec is silent, decisions are recorded in [Decisions](#decisions-and-d
 | 1 — Foundation | packaging, schemas, config, context, protocols, registry, engine, CSV/prediction loaders, validation, CLI skeleton, JSON export | complete (2026-10-17) |
 | 2 — Data checks | data integrity, class imbalance, feature correlation, outliers, pure statistics | complete (2026-10-18) |
 | 3 — ML checks | leakage indicators, prediction errors, generalization gap | complete (2026-10-20) |
-| 4 — Uncertainty | row/group bootstrap, severity rules, recommendation catalog | not started |
+| 4 — Uncertainty | row/group bootstrap, severity rules, recommendation catalog | complete (2026-10-21) |
 | 5 — Release | Rich terminal report, docs, examples, integration tests, CI, contributor docs, changelog | not started |
 
 ## Architecture
@@ -73,9 +73,13 @@ severities using configured thresholds.
   (property test); one-class test set handled. pytest 114 passed; ruff + mypy clean.
 
 ### Milestone 4 — Statistical reliability
-- [ ] statistics/bootstrap.py (row + group), uncertainty diagnostic
-- [ ] rules catalog, missing-evidence policies
+- [x] statistics/bootstrap.py (row + group), uncertainty diagnostic
+- [x] rules catalog, missing-evidence policies
 - Gate: seeded intervals reproducible; small samples handled.
+- Result: same seed -> identical intervals, different seed -> different; cluster bootstrap
+  draws whole groups with multiplicity and is ~3x wider than row bootstrap under strong
+  clustering; MAE CI matches normal approximation; undefined replicates counted (valid
+  fraction ≈ 1-(19/20)^20). Uncertainty results independent of which other checks run.
 
 ### Milestone 5 — Release readiness
 - [ ] Rich terminal report, README, docs/, examples + generator, sample JSON

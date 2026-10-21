@@ -10,6 +10,7 @@ from mldoctor.diagnostics.leakage import LeakageDiagnostic
 from mldoctor.diagnostics.outliers import OutlierDiagnostic
 from mldoctor.diagnostics.overfitting import OverfittingDiagnostic
 from mldoctor.diagnostics.prediction_errors import PredictionErrorDiagnostic
+from mldoctor.diagnostics.uncertainty import UncertaintyDiagnostic
 
 
 def builtin_diagnostics() -> list[Diagnostic]:
@@ -20,5 +21,6 @@ def builtin_diagnostics() -> list[Diagnostic]:
         OutlierDiagnostic(),
         LeakageDiagnostic(),
         OverfittingDiagnostic(),
+        UncertaintyDiagnostic(),
         PredictionErrorDiagnostic(),
     ]
