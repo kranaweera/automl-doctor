@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 from typing import ClassVar
 
@@ -117,6 +120,25 @@ def test_stdout_output(tmp_path: Path) -> None:
                                      "price", "--task", "regression", "--output", "-"])
     assert result.exit_code == 0
     Report.model_validate_json(result.stdout)
+
+
+@pytest.mark.parametrize("output", [None, "-"])
+def test_non_utf8_console_does_not_crash(output: str | None) -> None:
+    # Windows consoles and pipes default to cp1252, which has no '→' (seen in CI).
+    d = EXAMPLES / "grouped_data"
+    args = [sys.executable, "-m", "mldoctor.cli", "diagnose", "--train", str(d / "train.csv"),
+            "--test", str(d / "test.csv"), "--predictions", str(d / "test_predictions.csv"),
+            "--train-predictions", str(d / "train_predictions.csv"),
+            *EXAMPLE_ARGS["grouped_data"]]
+    if output:
+        args += ["--output", output]
+    env = {**os.environ, "PYTHONIOENCODING": "cp1252", "PYTHONUTF8": "0"}
+    proc = subprocess.run(args, capture_output=True, env=env, check=False)
+    assert proc.returncode == 0, proc.stderr.decode("cp1252", "replace")
+    if output == "-":
+        Report.model_validate_json(proc.stdout.decode("utf-8"))
+    else:
+        assert b"GROUP_OVERLAP" in proc.stdout
 
 
 def _write(tmp_path: Path, name: str, frame: pd.DataFrame) -> str:

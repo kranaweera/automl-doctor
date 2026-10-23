@@ -182,7 +182,7 @@ def _run(
     try:
         to_stdout = output is not None and str(output) == "-"
         if to_stdout:
-            sys.stdout.write(report_to_json(report))
+            _write_stdout_utf8(report_to_json(report))
         elif output is not None:
             path = write_report(report, output)
             if not quiet:
@@ -342,7 +342,27 @@ def version_cmd() -> None:
     typer.echo(f"automl-doctor {__version__} (report schema {SCHEMA_VERSION})")
 
 
+def _write_stdout_utf8(text: str) -> None:
+    """Write JSON to stdout as UTF-8 whatever the console encoding (e.g. cp1252 on Windows)."""
+    buffer = getattr(sys.stdout, "buffer", None)
+    if buffer is None:
+        sys.stdout.write(text)
+        return
+    sys.stdout.flush()
+    buffer.write(text.encode("utf-8"))
+    buffer.flush()
+
+
+def _tolerate_unencodable_output() -> None:
+    """Replace characters the console cannot encode (e.g. '→' under cp1252) instead of crashing."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is not None:
+            reconfigure(errors="replace")
+
+
 def main() -> None:
+    _tolerate_unencodable_output()
     app()
 
 
