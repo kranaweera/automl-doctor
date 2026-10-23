@@ -168,8 +168,8 @@ class UncertaintyDiagnostic(BaseDiagnostic):
             sizes = np.bincount(
                 np.unique(test[context.group].to_numpy(), return_inverse=True)[1]
             )
-            group_sizes = {"min": int(sizes.min()), "median": sig(float(np.median(sizes))),
-                           "max": int(sizes.max())}
+            group_sizes = {"min": int(np.min(sizes)), "median": sig(float(np.median(sizes))),
+                           "max": int(np.max(sizes))}
         metrics: dict[str, Any] = {
             "estimand": (
                 "performance of the fixed trained model on the population represented by the "

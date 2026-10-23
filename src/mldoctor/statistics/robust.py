@@ -121,7 +121,7 @@ def _screen(
             n=int(x.size),
             candidates=int(np.sum(score > z_threshold)),
             extreme=int(np.sum(score > extreme_z)),
-            max_score=float(score.max()),
+            max_score=float(np.max(score)),
         )
     lo, hi = iqr_fences(ref.q1, ref.q3, iqr_k)
     iqr = ref.iqr
@@ -130,7 +130,7 @@ def _screen(
         n=int(x.size),
         candidates=int(np.sum((x < lo) | (x > hi))),
         extreme=int(np.sum(beyond > far_out_k)),
-        max_score=float(max(beyond.max(), 0.0)),
+        max_score=float(max(np.max(beyond), 0.0)),
     )
 
 
